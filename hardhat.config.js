@@ -8,13 +8,13 @@ module.exports = {
   solidity: "0.8.2",
   networks: {
     ropsten: {
-      url: 'https://ropsten.infura.io/v3/62febf6a973c4e9389ccd0cb4f58c48d',
-      accounts: ['818d5c4f9fa0b836a6bb9fe55c707588466d1549da255c3f71b2e7637b37ab42'],
+      url: process.env.ROPSTEN_URL,
+      accounts: [process.env.PRIVATE_KEY],
     }
   },
   etherscan: {
     apiKey: {
-      ropsten: 'QIC6CQ7ZF5E4EF9PC74RE9H18BAZPWBKTM',
+      ropsten: process.env.ETHERSCAN_API_KEY,
     }
   }
 };

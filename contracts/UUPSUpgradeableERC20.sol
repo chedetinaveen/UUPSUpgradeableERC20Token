@@ -16,17 +16,23 @@ contract UUPSUpgradeableERC20Token is Initializable, UUPSUpgradeable, OwnableUpg
 
     uint256 private _cap;
     uint256 private _minimumSupply;
+    address private _owner;
+    mapping(address => uint256) private _balances;
 
     /**
      * @dev Gives holder all of existing tokens.
      */
     function initialize(string memory name, string memory symbol, uint256 cap, uint256 minimumSupply) external initializer {
+        require(minimumSupply <= cap);
+        _owner = msg.sender;
         __ERC20_init(name, symbol);
         __Ownable_init();
         __UUPSUpgradeable_init();
         __AccessControl_init();
-        _cap = cap;
-        _minimumSupply = minimumSupply;
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _cap = cap * (10 ** 18);
+        _mint(msg.sender, minimumSupply * (10 ** 18));
+        _minimumSupply = minimumSupply * (10 ** 18);
     }
 
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
@@ -41,6 +47,15 @@ contract UUPSUpgradeableERC20Token is Initializable, UUPSUpgradeable, OwnableUpg
 
     function cap() public view virtual returns (uint256) {
         return _cap;
+    }
+
+    function burn(address account, uint256 amount) public onlyRole(DEFAULT_ADMIN_ROLE) {
+      require(totalSupply() - amount >= _minimumSupply, "ERC20Upgradeable: totalSupply is less than minimumSupply");
+        _burn(account, amount);
+    }
+
+    function mint(address account, uint256 amount) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _mint(account, amount);
     }
 
     function _mint(address account, uint256 amount) internal virtual override {
@@ -63,7 +78,7 @@ contract UUPSUpgradeableERC20Token is Initializable, UUPSUpgradeable, OwnableUpg
 
         // burn amount calculations
         if (totalSupply() > _minimumSupply) {
-            burnAmount = (amount * 10) / 100;
+            burnAmount = amount / uint256(10);
             uint256 availableBurn = totalSupply() - _minimumSupply;
             if (burnAmount > availableBurn) {
                 burnAmount = availableBurn;

@@ -1,15 +1,20 @@
-# Basic Sample Hardhat Project
+# UUPSUpgradeableERC20Token Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+This project demonstrates a basic UUPS upgradeable ERC-20 token use case with different roles to burn and mint tokens with a 10% burn on every token transfer. The token has a minimumSupply of 100k and a max cap of 1000k.
 
 Try running some of the following tasks:
 
 ```shell
-npx hardhat accounts
+**Compile**
 npx hardhat compile
-npx hardhat clean
+
+**Test**
 npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
+
+**Deploy**
+npx hardhat run scripts/deploy.js --network <network>
+
+**Verify Contract**
+npx hardhat verify --network <network> <address>
+
 ```
